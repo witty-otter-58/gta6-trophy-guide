@@ -3,8 +3,8 @@
 // The guide itself is a set of plain static files in app/ — an index page, a
 // stylesheet, a small module and the trophy data — that any static server can
 // host and that works with the network off. This program's only job is to
-// assemble the submission: it clears the destination folder, copies app/ and
-// screenshots/ into it, and writes dossier.json there. The dossier is built
+// assemble the submission: it copies app/ and screenshots/ into the
+// destination and writes dossier.json there. The dossier is built
 // with the vendored make.fun helper (vendor/makefun-frontend.ts, untouched),
 // which is also what the scorer uses, so the file we write must match the
 // scorer's own rebuild byte for byte.
@@ -16,7 +16,7 @@
 //
 // Run it twice and the two outputs must be identical.
 
-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-frontend.ts';
@@ -30,9 +30,10 @@ function copyTree(sourceName: string): void {
   cpSync(source, join(targetDir, sourceName), { recursive: true });
 }
 
-// Start from a clean destination so a stale file from an earlier build can
-// never leak into the submission.
-rmSync(targetDir, { recursive: true, force: true });
+// The grader hands us an empty output directory, so there is nothing stale
+// to clear. The program must never delete the destination directory itself:
+// in the grading container it can be a mounted volume, and removing a mount
+// point fails. Just make sure it exists and copy into it.
 mkdirSync(targetDir, { recursive: true });
 copyTree('app');
 mkdirSync(join(targetDir, 'screenshots'), { recursive: true });
