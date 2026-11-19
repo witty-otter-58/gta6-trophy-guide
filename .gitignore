@@ -1,1 +1,3 @@
+# Build outputs and OS files — kept out of the repo
 out/
+.DS_Store
