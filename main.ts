@@ -1,36 +1,51 @@
-// A working gta6-trophy-guide-01 entry (Node 22, standard library only): the guide is this directory's app/ folder,
-// plain static files a browser opens at app/index.html (ES modules, CSS, no build step), offline: it loads nothing
-// over the network, and its trophy list and guides are app/data/trophies.json. The program hands it in: it copies app/
-// and screenshots/ from beside this file to /output and writes /output/dossier.json, the summary the judge reads (your
-// screenshots, the first load's files and bytes, and your source), with the vendored make.fun library. Leave
-// vendor/makefun-frontend.ts as it is: the scorer requires dossier.json to be byte for byte what its own copy writes.
+// Hand-in program for the GTA 6 trophy guide (competition gta6-trophy-guide-01).
 //
-// Only the plumbing, not a winner: a plain checklist of the 55 trophies with a one-line hint each. Write a real guide
-// for every trophy in your own words, a roadmap to the platinum, filters and a spoiler setting in app/, put 3 or 4 PNG
-// or JPEG screenshots of it in screenshots/ (the first by name is the cover; shots.json says which views this
-// starter's were taken of), and run it.
+// The guide itself is a set of plain static files in app/ — an index page, a
+// stylesheet, a small module and the trophy data — that any static server can
+// host and that works with the network off. This program's only job is to
+// assemble the submission: it clears the destination folder, copies app/ and
+// screenshots/ into it, and writes dossier.json there. The dossier is built
+// with the vendored make.fun helper (vendor/makefun-frontend.ts, untouched),
+// which is also what the scorer uses, so the file we write must match the
+// scorer's own rebuild byte for byte.
 //
-// Serve it locally with `node serve.ts`, then open http://localhost:8080.
-// Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
+// Runs on Node 22 with the standard library only. In the grading container
+// the destination is /output; anywhere else, MAKEFUN_OUTPUT_DIR overrides it:
+//
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+//
+// Run it twice and the two outputs must be identical.
 
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-frontend.ts';
 
-const here = fileURLToPath(new URL('.', import.meta.url));
-const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+const repoDir = fileURLToPath(new URL('.', import.meta.url));
+const targetDir = resolve(process.env.MAKEFUN_OUTPUT_DIR ?? '/output');
 
-mkdirSync(out, { recursive: true });
-cpSync(join(here, 'app'), join(out, 'app'), { recursive: true });
-mkdirSync(join(out, 'screenshots'), { recursive: true });
-if (existsSync(join(here, 'screenshots'))) cpSync(join(here, 'screenshots'), join(out, 'screenshots'), { recursive: true });
+function copyTree(sourceName: string): void {
+  const source = join(repoDir, sourceName);
+  if (!existsSync(source)) return;
+  cpSync(source, join(targetDir, sourceName), { recursive: true });
+}
 
-// The scorer's own caps (reference/gate.json): only text_max_bytes shapes the bytes; the others refuse an entry the
-// scorer would refuse (more than 4 screenshots or one over 256 KiB; more than 993 files and directories in app/ or
-// 48 MiB of app files: app/ counts beside /output's own 1000-entry cap, its screenshots/ and dossier.json).
-writeFileSync(
-  join(out, 'dossier.json'),
-  buildDossier(out, { text_max_bytes: 163840, screenshots: { max: 4, max_bytes: 262144 }, app_max_files: 993, app_max_bytes: 50331648 }),
-);
+// Start from a clean destination so a stale file from an earlier build can
+// never leak into the submission.
+rmSync(targetDir, { recursive: true, force: true });
+mkdirSync(targetDir, { recursive: true });
+copyTree('app');
+mkdirSync(join(targetDir, 'screenshots'), { recursive: true });
+copyTree('screenshots');
+
+// The caps mirror the scorer's gate: at most 4 screenshots of 256 KiB each,
+// app/ at most 993 entries and 48 MiB, and the dossier text capped so the
+// judge's view stays within its token budget.
+const dossierText = buildDossier(targetDir, {
+  text_max_bytes: 163840,
+  screenshots: { max: 4, max_bytes: 262144 },
+  app_max_files: 993,
+  app_max_bytes: 50331648,
+});
+writeFileSync(join(targetDir, 'dossier.json'), dossierText);
+console.log(`Wrote ${join(targetDir, 'dossier.json')}`);

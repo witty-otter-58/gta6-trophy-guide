@@ -3,23 +3,82 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GTA VI trophy checklist</title>
+<title>Leonida Trophy Guide — GTA VI: all 55 trophies, tracked</title>
+<meta name="description" content="An offline guide and tracker for the 55 PlayStation 5 trophies of Grand Theft Auto VI: official names, descriptions and grades, a roadmap to the platinum, missable warnings, and a checklist saved in your browser.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h1>GTA VI trophy checklist</h1>
-  <p id="progress">0 of 55 earned</p>
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="kicker">Grand Theft Auto VI &middot; PlayStation 5 &middot; offline guide</p>
+    <h1>Leonida Trophy Guide</h1>
+    <p class="subtitle">All 55 trophies, with a guide to each one, a roadmap to the platinum, and a checklist that remembers your progress.</p>
+    <div class="progress-wrap" aria-label="Trophy progress">
+      <div class="progress-line"><span id="progressText">0 of 55 earned</span><span id="progressPct">0%</span></div>
+      <div class="progress-bar"><div id="progressFill" class="progress-fill" style="width:0%"></div></div>
+      <p id="gradeBreakdown" class="grade-breakdown"></p>
+    </div>
+  </div>
 </header>
-<div class="controls">
-  <label>Grade <select id="grade"><option value="all">All</option><option value="platinum">Platinum</option><option value="gold">Gold</option><option value="silver">Silver</option><option value="bronze">Bronze</option></select></label>
-  <button id="export" type="button">Export progress</button>
-  <label class="import">Import progress <input id="import" type="file" accept="application/json"></label>
-</div>
-<table>
-  <thead><tr><th>Earned</th><th>Trophy</th><th>Grade</th><th>How to get it</th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
+
+<div class="sticky-progress" id="stickyProgress" aria-label="Trophy progress, always visible">0 of 55 earned</div>
+
+<main>
+  <section class="panel warn" id="missableBanner" aria-label="Missable warning">
+    <h2>Read this first: one trophy can be missed</h2>
+    <p><strong>Positive Mental Attitude</strong> (meditate at every spot across Leonida) is the only trophy the published guides flag as possibly missable. In Chapter 1, one morning after Lucia is home, she walks out to the balcony at Jason&rsquo;s house to meditate — follow her and take the optional meditation. It is gone after Chapter 1, and whether it counts toward the 18 spots is still unconfirmed, so do it and keep a Chapter 1 save until the trophy pops. Everything else can be earned after the story, in free roam. There is no mission replay and no New Game Plus, so keep a manual save at the start of every chapter and one before the final mission. Cheats disable trophies — keep them off your trophy save.</p>
+    <p class="warn-source">Sources: GTABase, PowerPyx (via Output Lag), KeenGamer, Push Square. See each trophy&rsquo;s own sources below.</p>
+  </section>
+
+  <section class="panel" id="roadmap" aria-label="Roadmap to the platinum">
+    <h2>Roadmap to the platinum</h2>
+    <p class="roadmap-intro">Play in this order and almost nothing needs a second run. Stages 1–2 follow the story; stages 3–5 are the open-world grind, best done while you travel; stage 6 is the cleanup. The platinum, <strong>Vice Got a Price!</strong>, needs every other trophy, and the gold <strong>A Long Road</strong> needs 100% completion — the in-game checklist (Touch Pad &gt; Progress &gt; 100% Completion, after the story) is your final authority.</p>
+    <ol id="roadmapStages" class="roadmap-stages"></ol>
+  </section>
+
+  <section class="panel controls-panel" aria-label="Tracker controls">
+    <div class="controls-row">
+      <label class="search-label">Search <input id="search" type="search" placeholder="Trophy, mission or keyword…" autocomplete="off"></label>
+      <label class="select-label">Grade
+        <select id="gradeFilter">
+          <option value="all">All grades</option>
+          <option value="platinum">Platinum</option>
+          <option value="gold">Gold</option>
+          <option value="silver">Silver</option>
+          <option value="bronze">Bronze</option>
+        </select>
+      </label>
+      <label class="select-label">Show
+        <select id="earnedFilter">
+          <option value="all">All trophies</option>
+          <option value="remaining">Still to earn</option>
+          <option value="earned">Earned only</option>
+        </select>
+      </label>
+      <label class="toggle"><input id="spoilerToggle" type="checkbox"> Hide story trophies until earned</label>
+    </div>
+    <div class="controls-row">
+      <div id="kindFilters" class="kind-filters" role="group" aria-label="Filter by kind"></div>
+    </div>
+    <div class="controls-row controls-actions">
+      <span id="shownCount" class="shown-count"></span>
+      <button id="exportBtn" type="button">Export progress</button>
+      <label class="import-label">Import progress <input id="importFile" type="file" accept="application/json,.json"></label>
+      <button id="resetBtn" type="button">Reset progress</button>
+    </div>
+    <p id="importNote" class="import-note" role="status"></p>
+  </section>
+
+  <section aria-label="Trophy list">
+    <ul id="trophyList" class="trophy-list"></ul>
+    <p id="emptyNote" class="empty-note" hidden>No trophies match these filters. Clear the search or pick another kind.</p>
+  </section>
+</main>
+
+<footer>
+  <p>Names, descriptions and grades are the official PlayStation list, as published by Exophase and PSNProfiles and cross-checked by Planet GTA 6. Each guide is written for this page in its own words and names its sources; where no published guide has confirmed a method yet, the guide says so instead of guessing. No Rockstar artwork or logos are used. This guide works fully offline — it loads nothing from the network.</p>
+  <p class="footer-sources">Sources: <a href="https://www.pushsquare.com/guides/gta-6-trophy-guide-and-roadmap">Push Square trophy guide</a> &middot; <a href="https://www.gtabase.com/articles/gta-6/gta-6-achievements-trophies-list-ps5-xbox-series">GTABase trophy list</a> &middot; <a href="https://www.planetgta6.com/en/gta-6-trophies/">Planet GTA 6 trophy list</a> &middot; <a href="https://outputlag.com/guides/gta-6-trophy-list/">Output Lag trophy list</a> &middot; <a href="https://www.keengamer.com/articles/guides/gta-6-trophy-guide-platinum-roadmap-all-55-trophies/">KeenGamer roadmap</a> &middot; <a href="https://www.igrandtheftauto.com/gta6/guides/trophies-and-achievements">iGrandTheftAuto guide</a></p>
+</footer>
 <script type="module" src="app.js"></script>
 </body>
 </html>

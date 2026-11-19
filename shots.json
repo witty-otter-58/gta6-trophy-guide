@@ -1,5 +1,1 @@
-[
-  { "file": "1-checklist.jpg", "path": "/", "viewport": { "width": 1280, "height": 800 } },
-  { "file": "2-silver.jpg", "path": "/", "grade": "silver", "viewport": { "width": 1280, "height": 800 } },
-  { "file": "3-bronze.jpg", "path": "/", "grade": "bronze", "scroll": 1400, "viewport": { "width": 1280, "height": 800 } }
-]
+[{"file":"1-cover.jpg","view":"trophy list with the Positive Mental Attitude guide open (missable flag, warning box and cited sources), sticky progress bar on top","viewport":{"height":800,"width":1280}},{"file":"2-roadmap.jpg","path":"/#roadmap","view":"roadmap to the platinum, stages 1-5 with per-stage progress and trophy chips","viewport":{"height":800,"width":1280}},{"file":"3-spoiler.jpg","view":"spoiler setting on (checkbox ticked): hidden story trophies masked as Hidden trophy in the roadmap and list, earned ones revealed","viewport":{"height":800,"width":1280}},{"file":"4-collectibles.jpg","view":"kind filter on Collectibles with search, grade and export/import controls, progress visible","viewport":{"height":800,"width":1280}}]
